@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reseñas de Películas</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- NAVEGACIÓN -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">CINÉ<span class="logo-highlight">FILO</span></div>
+            <ul class="nav-menu">
+                
+                <li><a href="#" class="nav-link">HOME</a></li>
+                <li><a href="#" class="nav-link">CONTACTO</a></li>
+            </ul>
+            <div class="nav-perfil">
+                <button class="perfil-btn" id="perfilBtn">
+                    <div class="perfil-circle">👤</div>
+                </button>
+                <div class="perfil-menu" id="perfilMenu">
+                    <div class="perfil-user-info" id="perfilUserInfo">
+                        <!-- Se mostrará aquí el nombre del usuario cuando esté logueado -->
+                    </div>
+                    <button class="perfil-logout" id="perfilLogout">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SECCIÓN DE HÉROE CON VIDEO DE FONDO -->
+    <section class="hero-section">
+        <div class="video-background">
+            <video autoplay muted loop playsinline>
+                <source src="videos/Video.mp4" type="video/mp4">
+                
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1>RESEÑAS</h1>
+            <p>Soy Santiago. Amo las series y las películas. En este apartado comparto mis reseñas, impresiones y datos discretos del día que recibí a la pantalla.</p>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE FILTROS Y BOTÓN AGREGAR -->
+    <section class="filters-section">
+        <div class="filters-container">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">POPULARES</button>
+                <button class="filter-btn" data-filter="accion">ACCIÓN</button>
+                <button class="filter-btn" data-filter="comedia">COMEDIA</button>
+                <button class="filter-btn" data-filter="drama">DRAMA</button>
+                <button class="filter-btn" data-filter="terror">TERROR</button>
+                <button class="filter-btn" data-filter="thriller">THRILLER</button>
+                <button class="filter-btn" data-filter="otros">OTROS</button>
+            </div>
+            <button class="btn-agregar" id="btnAgregar">AGREGAR</button>
+        </div>
+    </section>
+
+    <!-- CARRUSEL DE PELÍCULAS -->
+    <section class="carousel-section">
+        <div class="carousel-container">
+            <button class="carousel-btn prev" id="prevBtn">‹</button>
+            <div class="carousel-wrapper">
+                <div class="carousel" id="carousel">
+                    <!-- Las películas se generarán aquí con JavaScript -->
+                </div>
+            </div>
+            <button class="carousel-btn next" id="nextBtn">›</button>
+        </div>
+    </section>
+
+    <!-- MODAL PARA AGREGAR PELÍCULA -->
+    <div class="modal" id="modalAgregar">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Agregar Nueva Película/Serie</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="formPelicula" class="form-pelicula">
+                <div class="form-group">
+                    <label for="nombre">Nombre de la Película/Serie</label>
+                    <input type="text" id="nombre" placeholder="Ej: Inception" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria">Categoría</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="categoria" value="accion"> Acción</label>
+                        <label><input type="checkbox" name="categoria" value="comedia"> Comedia</label>
+                        <label><input type="checkbox" name="categoria" value="drama"> Drama</label>
+                        <label><input type="checkbox" name="categoria" value="terror"> Terror</label>
+                        <label><input type="checkbox" name="categoria" value="thriller"> Thriller</label>
+                        <label><input type="checkbox" name="categoria" value="otros"> Otros</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo">¿Es nueva o repetida?</label>
+                    <select id="tipo" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="nueva">Nueva</option>
+                        <option value="repetida">Repetida</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="contenido">¿Es Película o Serie?</label>
+                    <select id="contenido" required>
+                        <option value="">Selecciona una opción</option>
+                        <option value="pelicula">Película</option>
+                        <option value="serie">Serie</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="duracion">Duración (minutos)</label>
+                    <input type="number" id="duracion" placeholder="Ej: 148" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="satisfaccion">Satisfacción</label>
+                    <select id="satisfaccion" required>
+                        <option value="">Selecciona un nivel</option>
+                        <option value="alto">Alto</option>
+                        <option value="medio">Medio</option>
+                        <option value="bajo">Bajo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="resena">Reseña</label>
+                    <textarea id="resena" placeholder="Escribe tu reseña aquí..." rows="5" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="imagen">Subir Imagen</label>
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="imagen" accept="image/*" required>
+                        <span class="upload-text">Haz clic para subir una imagen</span>
+                    </div>
+                    <div id="previewContainer" class="preview-container"></div>
+                </div>
+
+                <button type="submit" class="btn-submit">Agregar Película</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SECCIÓN DETALLE DE PELÍCULA SELECCIONADA -->
+    <section class="detail-section" id="detailSection">
+        <div class="detail-container">
+            <div class="detail-poster">
+                <div class="poster-placeholder" id="posterImage">
+                    <svg viewBox="0 0 300 400" width="100%" height="100%">
+                        <rect width="300" height="400" fill="#333"/>
+                        <text x="150" y="200" text-anchor="middle" fill="#666" font-size="20">Sin Imagen</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="detail-info">
+                <h2 id="detailTitle">Selecciona una película</h2>
+                
+                <div class="detail-resena">
+                    <p id="detailResena">Las reseñas aparecerán aquí...</p>
+                </div>
+
+                <div class="detail-datos">
+                    <div class="dato-item">
+                        <span class="dato-label">TIPO:</span>
+                        <span class="dato-value" id="datoContenido">-</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">CATEGORÍA:</span>
+                        <span class="dato-value" id="datoCategoría">-</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">REP / NUEVA:</span>
+                        <span class="dato-value" id="datoTipo">-</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">DURACIÓN:</span>
+                        <span class="dato-value" id="datoDuracion">-</span>
+                    </div>
+                    <div class="dato-item">
+                        <span class="dato-label">SATISFACCIÓN:</span>
+                        <span class="dato-value" id="datoSatisfaccion">-</span>
+                    </div>
+                </div>
+
+                <button id="btnEliminar" class="btn-eliminar">🗑️ Eliminar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE GRÁFICOS -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <!-- Promedio de datos (Top 5 con estrellas) -->
+            <div class="stats-left">
+                <h3>PROMEDIO DE DATOS</h3>
+                <div class="top-movies" id="topMovies">
+                    <!-- Se generará dinámicamente -->
+                </div>
+            </div>
+
+            <!-- Gráfico de barras -->
+            <div class="stats-right">
+                <h3>GRÁFICO</h3>
+                <div class="bar-chart-container">
+                    <div class="bar-chart" id="barChart">
+                        <!-- Se generará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN FORO -->
+    <section class="forum-section">
+        <div class="forum-container">
+            <h2>FORO DE DISCUSIÓN</h2>
+            
+            <div class="forum-form-wrapper">
+                <form id="formForo" class="form-foro">
+                    <div class="form-group">
+                        <label for="foroPelicula">Selecciona una Película/Serie</label>
+                        <select id="foroPelicula" required>
+                            <option value="">-- Elige una película --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="foroCalificacion">Calificación</label>
+                        <div class="stars-input" id="starsInput">
+                            <span class="star" data-value="1">★</span>
+                            <span class="star" data-value="2">★</span>
+                            <span class="star" data-value="3">★</span>
+                            <span class="star" data-value="4">★</span>
+                            <span class="star" data-value="5">★</span>
+                        </div>
+                        <input type="hidden" id="foroCalificacion" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="foroResena">Tu Comentario</label>
+                        <textarea id="foroResena" placeholder="Comparte tu opinión sobre esta película..." rows="4" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="btnEnviarForo">Enviar Comentario</button>
+                    <p class="forum-login-msg" id="forumLoginMsg">Debes iniciar sesión para participar en el foro</p>
+                </form>
+            </div>
+
+            <div class="forum-comments" id="forumComments">
+                <!-- Los comentarios se mostrarán aquí -->
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL PARA CONFIRMACIÓN DE ELIMINACIÓN -->
+    <div class="modal" id="modalConfirmEliminar">
+        <div class="modal-content modal-confirm">
+            <div class="modal-header">
+                <h2 id="confirmEliminarTitle">Confirmar eliminación</h2>
+                <button class="close-modal" id="closeConfirmEliminar">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmEliminarMsg"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar" id="btnCancelarEliminar">Cancelar</button>
+                <button class="btn-confirmar-eliminar" id="btnConfirmarEliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA RESULTADO DE OPERACIÓN -->
+    <div class="modal" id="modalResultado">
+        <div class="modal-content modal-resultado">
+            <div class="modal-header">
+                <h2 id="resultadoTitle">Mensaje</h2>
+                <button class="close-modal" id="closeModalResultado">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="resultadoMsg"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA LOGIN/REGISTRO -->
+    <div class="modal" id="modalAutenticacion">
+        <div class="modal-content modal-auth">
+            <div class="modal-header">
+                <h2>Cuenta</h2>
+                <button class="close-modal" id="closeModalAuth">&times;</button>
+            </div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Iniciar Sesión</button>
+                <button class="auth-tab" data-tab="register">Registrarse</button>
+            </div>
+            
+            <!-- TAB LOGIN -->
+            <div class="auth-content" id="loginTab">
+                <form id="formLogin">
+                    <div class="form-group">
+                        <label for="loginUsername">Nombre de Usuario</label>
+                        <input type="text" id="loginUsername" placeholder="Tu nombre de usuario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña</label>
+                        <input type="password" id="loginPassword" placeholder="Tu contraseña" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Iniciar Sesión</button>
+                </form>
+            </div>
+
+            <!-- TAB REGISTER -->
+            <div class="auth-content" id="registerTab">
+                <form id="formRegister">
+                    <div class="form-group">
+                        <label for="registerNombre">Nombre</label>
+                        <input type="text" id="registerNombre" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerApellido">Apellido</label>
+                        <input type="text" id="registerApellido" placeholder="Tu apellido" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerUsername">Nombre de Usuario</label>
+                        <input type="text" id="registerUsername" placeholder="Elige un nombre de usuario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Contraseña</label>
+                        <input type="password" id="registerPassword" placeholder="Crea una contraseña" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPasswordConfirm">Repetir Contraseña</label>
+                        <input type="password" id="registerPasswordConfirm" placeholder="Repite la contraseña" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Registrarse</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/backup.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

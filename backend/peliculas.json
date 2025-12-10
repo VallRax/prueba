@@ -1,0 +1,61 @@
+[
+  {
+    "id": 1764125014526,
+    "nombre": "Arcane",
+    "categorias": [
+      "accion",
+      "drama",
+      "otros"
+    ],
+    "tipo": "nueva",
+    "duracion": 200,
+    "satisfaccion": "alto",
+    "resena": "Muy buena la serie",
+    "imagen": "/imagenes/1764125014524-jat2tgkpw-8c2d8dc9-03ce-4e3c-a309-dfd0f8fca719_1920x1200.jpg",
+    "fecha": "2025-11-26T02:43:34.526Z"
+  },
+  {
+    "id": 1764124958607,
+    "nombre": "House Of Dragon",
+    "categorias": [
+      "accion",
+      "drama",
+      "otros"
+    ],
+    "tipo": "nueva",
+    "duracion": 300,
+    "satisfaccion": "alto",
+    "resena": "Muy buena serie",
+    "imagen": "/imagenes/1764124958605-9r842u55s-450_1000.jpeg",
+    "fecha": "2025-11-26T02:42:38.607Z"
+  },
+  {
+    "id": 1764123224628,
+    "nombre": "Slam Dunk",
+    "categorias": [
+      "accion",
+      "comedia",
+      "otros"
+    ],
+    "tipo": "nueva",
+    "duracion": 165,
+    "satisfaccion": "alto",
+    "resena": "Es muy wena fanatico del basquetbol",
+    "imagen": "/imagenes/1764123224626-710i60x1m-p_mainv_mitsui_sp.jpg",
+    "fecha": "2025-11-26T02:13:44.628Z"
+  },
+  {
+    "id": 1764123081846,
+    "nombre": "El conjuro",
+    "categorias": [
+      "terror",
+      "thriller"
+    ],
+    "tipo": "repetida",
+    "duracion": 160,
+    "satisfaccion": "alto",
+    "resena": "Da mucho miedo !!!!",
+    "imagen": "/imagenes/1764123081844-jbilydhy6-unnamed.jpg",
+    "fecha": "2025-11-26T02:11:21.846Z"
+  }
+]
