@@ -16,7 +16,7 @@ Pagina de Taller/
 └── README.md           # Este archivo
 ```
 
-## 🎬 Configuración del Video de Fondo
+
 
 1. **Obtener un video**: Descarga o crea un video de personas viendo películas en cine (idealmente en blanco y negro para coincidir con el diseño)
    
