@@ -4,8 +4,6 @@
 
 Esta es una aplicación web completa para publicar y gestionar reseñas de películas y series. Incluye un carrusel interactivo, formulario modal para agregar películas, y gráficos estadísticos.
 
-## 📂 Estructura del Proyecto
-
 ```
 Pagina de Taller/
 ├── index.html          # Archivo HTML principal
