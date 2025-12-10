@@ -2,11 +2,15 @@
 let peliculas = [];
 let currentIndex = 0;
 let selectedMovie = null;
+let filtroActual = 'all'; // Filtro actual: 'all', 'popular', o nombre de categoría
+let peliculasFavoritas = []; // Array de IDs de películas favoritas
 
 // Cargar películas desde localStorage
 async function cargarPeliculas() {
     try {
         peliculas = StorageAPI.cargarPeliculas();
+        cargarFavoritos();
+
     } catch (error) {
         console.error('Error al cargar películas:', error);
         peliculas = [];
@@ -89,6 +93,7 @@ const detailSection = document.getElementById('detailSection');
 const topMovies = document.getElementById('topMovies');
 const barChart = document.getElementById('barChart');
 const btnEliminar = document.getElementById('btnEliminar');
+const btnFavorito = document.getElementById('btnFavorito');
 
 // ========== MODAL ==========
 btnAgregar.addEventListener('click', () => {
@@ -197,6 +202,7 @@ formPelicula.addEventListener('submit', async (e) => {
 
         renderCarousel();
         updateStats();
+        updateRankingSection();
 
         // Restaurar botón
         btnAgregar.disabled = false;
@@ -211,11 +217,84 @@ formPelicula.addEventListener('submit', async (e) => {
     }
 });
 
+// ========== FUNCIONES DE FILTRADO ==========
+function obtenerPelículasFiltradas() {
+    let resultado = peliculas;
+    
+    if (filtroActual === 'all') {
+        // Mostrar todas las películas con favoritos primero
+        const favoritas = peliculas.filter(p => esFavorito(p.id));
+        const noFavoritas = peliculas.filter(p => !esFavorito(p.id));
+        resultado = [...favoritas, ...noFavoritas];
+    } else if (filtroActual === 'popular') {
+        // Mostrar solo películas favoritas (Popular)
+        resultado = peliculas.filter(p => esFavorito(p.id));
+    } else {
+        // Filtrar por categoría (con favoritos primero)
+        const porCategoria = peliculas.filter(pelicula => 
+            pelicula.categorias.includes(filtroActual)
+        );
+        const favoritas = porCategoria.filter(p => esFavorito(p.id));
+        const noFavoritas = porCategoria.filter(p => !esFavorito(p.id));
+        resultado = [...favoritas, ...noFavoritas];
+    }
+    
+    return resultado;
+}
+
+// ========== GESTIÓN DE FAVORITOS ==========
+function cargarFavoritos() {
+    try {
+        const favoritos = localStorage.getItem('peliculasFavoritas');
+        peliculasFavoritas = favoritos ? JSON.parse(favoritos) : [];
+    } catch (error) {
+        console.error('Error al cargar favoritos:', error);
+        peliculasFavoritas = [];
+    }
+}
+
+function guardarFavoritos() {
+    try {
+        localStorage.setItem('peliculasFavoritas', JSON.stringify(peliculasFavoritas));
+    } catch (error) {
+        console.error('Error al guardar favoritos:', error);
+    }
+}
+
+function toggleFavorito(peliculaId) {
+    const index = peliculasFavoritas.indexOf(peliculaId);
+    if (index > -1) {
+        peliculasFavoritas.splice(index, 1);
+    } else {
+        peliculasFavoritas.push(peliculaId);
+    }
+    guardarFavoritos();
+    actualizarBtnFavorito();
+}
+
+function esFavorito(peliculaId) {
+    return peliculasFavoritas.includes(peliculaId);
+}
+
+function actualizarBtnFavorito() {
+    const btnFavorito = document.getElementById('btnFavorito');
+    if (!btnFavorito || !selectedMovie) return;
+    
+    if (esFavorito(selectedMovie.id)) {
+        btnFavorito.classList.add('active');
+    } else {
+        btnFavorito.classList.remove('active');
+    }
+}
+
 // ========== CARRUSEL ==========
 function renderCarousel() {
     carousel.innerHTML = '';
+    
+    // Obtener películas filtradas
+    const peliculasFiltradas = obtenerPelículasFiltradas();
 
-    if (peliculas.length === 0) {
+    if (peliculasFiltradas.length === 0) {
         carousel.innerHTML = `
             <div class="carousel-item">
                 <div class="carousel-item-placeholder">
@@ -231,7 +310,7 @@ function renderCarousel() {
         return;
     }
 
-    peliculas.forEach((pelicula, index) => {
+    peliculasFiltradas.forEach((pelicula, index) => {
         const item = document.createElement('div');
         item.className = 'carousel-item';
         item.innerHTML = `
@@ -241,6 +320,7 @@ function renderCarousel() {
             selectedMovie = pelicula;
             updateDetailSection();
             updateStats();
+            updateRankingSection();
             detailSection.scrollIntoView({ behavior: 'smooth' });
         });
         carousel.appendChild(item);
@@ -281,56 +361,23 @@ filterButtons.forEach(btn => {
         btn.classList.add('active');
 
         const filter = btn.getAttribute('data-filter');
-        // Aquí se podría implementar filtrado, por ahora solo cambia el botón
+        filtroActual = filter; // Actualizar filtro global
         currentIndex = 0;
-        updateCarouselPosition();
+        renderCarousel(); // Renderizar con el nuevo filtro
+        updateDetailSection();
+        updateStats();
+        updateRankingSection();
     });
 });
 
-// ========== BOTÓN ELIMINAR ==========
-btnEliminar.addEventListener('click', async () => {
+// ========== BOTÓN FAVORITO ==========
+btnFavorito.addEventListener('click', () => {
     if (!selectedMovie) {
         alert('Por favor, selecciona una película primero');
         return;
     }
-
-    // Mostrar confirmación
-    const confirmar = confirm(`¿Estás seguro de que deseas eliminar "${selectedMovie.nombre}"?`);
     
-    if (!confirmar) {
-        return;
-    }
-
-    try {
-        // Cambiar texto del botón
-        const textoOriginal = btnEliminar.textContent;
-        btnEliminar.textContent = '⏳ Eliminando...';
-        btnEliminar.disabled = true;
-
-        // Eliminar película del backend
-        await eliminarPelicula(selectedMovie.id);
-
-        // Recargar películas
-        await cargarPeliculas();
-
-        // Resetear película seleccionada
-        selectedMovie = null;
-        
-        // Actualizar UI
-        renderCarousel();
-        updateStats();
-        updateDetailSection();
-
-        // Restaurar botón
-        btnEliminar.textContent = textoOriginal;
-        btnEliminar.disabled = false;
-
-        alert('¡Película eliminada correctamente!');
-    } catch (error) {
-        alert('Error al eliminar: ' + error.message);
-        btnEliminar.textContent = textoOriginal;
-        btnEliminar.disabled = false;
-    }
+    toggleFavorito(selectedMovie.id);
 });
 
 // ========== SECCIÓN DE DETALLE ==========
@@ -345,6 +392,7 @@ function updateDetailSection() {
             </svg>
         `;
         btnEliminar.style.display = 'none';
+        btnFavorito.style.display = 'none';
         return;
     }
 
@@ -360,8 +408,12 @@ function updateDetailSection() {
     document.getElementById('datoDuracion').textContent = `${selectedMovie.duracion} min`;
     document.getElementById('datoSatisfaccion').textContent = selectedMovie.satisfaccion;
     
-    // Mostrar botón eliminar cuando hay película seleccionada
+    // Mostrar botones cuando hay película seleccionada
     btnEliminar.style.display = 'block';
+    btnFavorito.style.display = 'block';
+    
+    // Actualizar estado del botón favorito
+    actualizarBtnFavorito();
 }
 
 // ========== ESTADÍSTICAS ==========
@@ -543,6 +595,112 @@ function updateBarChart() {
         </div>
     `;
     barChart.appendChild(legend);
+}
+
+// ========== RANKING DE COMENTARIOS ==========
+function updateRankingSection() {
+    updateTopCommenters();
+    updateTopRatedMovies();
+}
+
+function updateTopCommenters() {
+    const topCommenters = document.getElementById('topCommenters');
+    if (!topCommenters) return;
+    
+    topCommenters.innerHTML = '';
+    
+    const comentarios = StorageAPI.cargarComentarios();
+    
+    if (comentarios.length === 0) {
+        topCommenters.innerHTML = '<p style="color: #999; text-align: center; padding: 1rem;">No hay comentarios aún</p>';
+        return;
+    }
+    
+    // Contar comentarios por usuario
+    const contadores = {};
+    comentarios.forEach(comentario => {
+        contadores[comentario.username] = (contadores[comentario.username] || 0) + 1;
+    });
+    
+    // Ordenar y obtener top 5
+    const top5 = Object.entries(contadores)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+    
+    if (top5.length === 0) {
+        topCommenters.innerHTML = '<p style="color: #999; text-align: center; padding: 1rem;">No hay comentarios aún</p>';
+        return;
+    }
+    
+    top5.forEach((entry, index) => {
+        const [username, count] = entry;
+        const initial = username.charAt(0).toUpperCase();
+        
+        const rankItem = document.createElement('div');
+        rankItem.className = 'rank-item';
+        rankItem.innerHTML = `
+            <div class="rank-number">${index + 1}</div>
+            <div class="rank-user-profile">${initial}</div>
+            <div class="rank-user-info">
+                <div class="rank-username">${username}</div>
+                <div class="rank-count">${count} comentario${count !== 1 ? 's' : ''}</div>
+            </div>
+        `;
+        topCommenters.appendChild(rankItem);
+    });
+}
+
+function updateTopRatedMovies() {
+    const topRatedMovies = document.getElementById('topRatedMovies');
+    if (!topRatedMovies) return;
+    
+    topRatedMovies.innerHTML = '';
+    
+    const comentarios = StorageAPI.cargarComentarios();
+    
+    // Calcular promedio de calificación por película
+    const promedios = {};
+    const contadores = {};
+    
+    comentarios.forEach(comentario => {
+        const pelicula = comentario.pelicula;
+        promedios[pelicula] = (promedios[pelicula] || 0) + comentario.calificacion;
+        contadores[pelicula] = (contadores[pelicula] || 0) + 1;
+    });
+    
+    // Calcular promedios y ordenar
+    const ratings = Object.entries(promedios)
+        .map(([pelicula, total]) => ({
+            pelicula,
+            promedio: (total / contadores[pelicula]).toFixed(1),
+            comentarios: contadores[pelicula]
+        }))
+        .sort((a, b) => parseFloat(b.promedio) - parseFloat(a.promedio))
+        .slice(0, 5);
+    
+    if (ratings.length === 0) {
+        topRatedMovies.innerHTML = '<p style="color: #999; text-align: center; padding: 1rem;">No hay calificaciones aún</p>';
+        return;
+    }
+    
+    ratings.forEach((item, index) => {
+        const stars = Array(5)
+            .fill()
+            .map((_, i) => `<span class="star ${i < Math.round(item.promedio) ? '' : 'empty'}">★</span>`)
+            .join('');
+        
+        const rankItem = document.createElement('div');
+        rankItem.className = 'rank-item movie-rank';
+        rankItem.innerHTML = `
+            <div class="rank-number">${index + 1}</div>
+            <div class="rank-movie-info">
+                <div class="rank-movie-name">${item.pelicula}</div>
+                <div class="rank-movie-rating">${stars}</div>
+                <div class="rank-movie-count">${item.promedio}/5 (${item.comentarios} calificación${item.comentarios !== 1 ? 'es' : ''})</div>
+            </div>
+        `;
+        topRatedMovies.appendChild(rankItem);
+    });
 }
 
 // ========== GESTIÓN DE AUTENTICACIÓN ==========
@@ -805,6 +963,7 @@ btnConfirmarEliminar.addEventListener('click', async () => {
         selectedMovie = null;
         renderCarousel();
         updateStats();
+        updateRankingSection();
         updateDetailSection();
         
         modalConfirmEliminar.classList.remove('active');
@@ -987,6 +1146,7 @@ formForo.addEventListener('submit', (e) => {
     
     // Recargar comentarios
     cargarComentarios();
+    updateRankingSection();
     
     // Limpiar formulario
     formForo.reset();
@@ -1006,6 +1166,7 @@ async function init() {
     actualizarUIForo();
     renderCarousel();
     updateStats();
+    updateRankingSection();
     if (peliculas.length > 0) {
         selectedMovie = peliculas[0];
         updateDetailSection();

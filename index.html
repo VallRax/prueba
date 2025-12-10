@@ -42,7 +42,7 @@
 
         <div class="hero-content">
             <h1>RESEÑAS</h1>
-            <p>Soy Santiago. Amo las series y las películas. En este apartado comparto mis reseñas, impresiones y datos discretos del día que recibí a la pantalla.</p>
+            <p>Soy Alinette. Amo las series y las películas. En este apartado comparto mis reseñas, impresiones y datos discretos del día que recibí a la pantalla.</p>
         </div>
     </section>
 
@@ -156,6 +156,7 @@
     <section class="detail-section" id="detailSection">
         <div class="detail-container">
             <div class="detail-poster">
+                <button id="btnFavorito" class="btn-favorito-poster">★</button>
                 <div class="poster-placeholder" id="posterImage">
                     <svg viewBox="0 0 300 400" width="100%" height="100%">
                         <rect width="300" height="400" fill="#333"/>
@@ -215,6 +216,31 @@
                 <h3>GRÁFICO</h3>
                 <div class="bar-chart-container">
                     <div class="bar-chart" id="barChart">
+                        <!-- Se generará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE RANKING DE COMENTARIOS -->
+    <section class="ranking-section">
+        <div class="ranking-container">
+            <h2>RANKING DE COMENTARIOS</h2>
+            
+            <div class="ranking-grid">
+                <!-- Top comentaristas -->
+                <div class="ranking-box ranking-commenters">
+                    <h3>Top comentaristas</h3>
+                    <div class="ranking-list" id="topCommenters">
+                        <!-- Se generará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Top películas por calificación -->
+                <div class="ranking-box ranking-rated">
+                    <h3>Ranking</h3>
+                    <div class="ranking-list" id="topRatedMovies">
                         <!-- Se generará dinámicamente -->
                     </div>
                 </div>
