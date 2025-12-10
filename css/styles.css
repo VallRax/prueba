@@ -45,10 +45,19 @@ body {
     font-weight: bold;
     letter-spacing: 2px;
     color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .logo-highlight {
     color: #ff4444;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 
 .nav-menu {
